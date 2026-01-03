@@ -1,0 +1,37 @@
+name: study_gatherer
+description: A new Flutter project for study aggregation.
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  # UI Components
+  google_fonts: ^6.1.0
+  flutter_markdown: ^0.6.14
+  
+  # Logic & Data
+  http: ^1.1.0
+  sqflite: ^2.3.0
+  path: ^1.8.3
+  
+  # "The Gatherer" Tools (Free)
+  youtube_explode_dart: ^2.0.2 # For scraping YouTube without API key
+  google_generative_ai: ^0.4.0 # For Gemini AI (Free Tier)
+  
+  # Export Tools
+  pdf: ^3.10.0
+  printing: ^5.11.0
+  path_provider: ^2.1.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^2.0.0
+
+flutter:
+  uses-material-design: true
+  
