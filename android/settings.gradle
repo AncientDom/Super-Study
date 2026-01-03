@@ -1,11 +1,47 @@
+pluginManagement {
+    def flutterSdkPath = settings.ext.flutterSdkPath
+    if (!flutterSdkPath) {
+        flutterSdkPath = System.getenv("FLUTTER_ROOT")
+    }
+
+    repositories {
+        google()
+        mavenCentral()
+        gradlePluginPortal()
+    }
+
+    resolutionStrategy {
+        eachPlugin {
+            if (requested.id.id == "dev.flutter.flutter-gradle-plugin") {
+                // Allows using the plugin without defining version in build.gradle
+                useModule("dev.flutter:flutter-gradle-plugin:1.0.0")
+            }
+        }
+    }
+    
+    // DEFINE VERSIONS HERE TO FIX "MISSING VERSION" ERROR
+    plugins {
+        id "com.android.application" version "8.1.0" apply false
+        id "org.jetbrains.kotlin.android" version "1.8.22" apply false
+        id "dev.flutter.flutter-gradle-plugin" version "1.0.0" apply false
+    }
+}
+
 include ':app'
 
-def localPropertiesFile = new File(rootProject.projectDir, "local.properties")
-def properties = new Properties()
+// LINK FLUTTER SDK (Works on both your PC and GitHub CI)
+def flutterSdkPath = System.getenv("FLUTTER_ROOT")
+if (flutterSdkPath == null) {
+    def localPropertiesFile = new File(rootProject.projectDir, "local.properties")
+    if (localPropertiesFile.exists()) {
+        def properties = new Properties()
+        localPropertiesFile.withReader("UTF-8") { reader -> properties.load(reader) }
+        flutterSdkPath = properties.getProperty("flutter.sdk")
+    }
+}
 
-assert localPropertiesFile.exists()
-localPropertiesFile.withReader("UTF-8") { reader -> properties.load(reader) }
-
-def flutterSdkPath = properties.getProperty("flutter.sdk")
-assert flutterSdkPath != null, "flutter.sdk not set in local.properties"
-apply from: "$flutterSdkPath/packages/flutter_tools/gradle/app_plugin_loader.gradle"
+if (flutterSdkPath != null) {
+    apply from: "$flutterSdkPath/packages/flutter_tools/gradle/app_plugin_loader.gradle"
+} else {
+    println "Warning: Flutter SDK path not found. Build may fail if plugins are missing."
+}
