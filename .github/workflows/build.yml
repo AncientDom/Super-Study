@@ -1,0 +1,41 @@
+name: Build Android APK
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Check out your code
+      - uses: actions/checkout@v4
+
+      # 2. Install Java (Required for Android)
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
+      # 3. Install Flutter
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.19.0'
+          channel: 'stable'
+
+      # 4. Get the libraries (pubspec.yaml)
+      - name: Install Dependencies
+        run: flutter pub get
+
+      # 5. Build the APK
+      - name: Build APK
+        run: flutter build apk --release --no-tree-shake-icons
+
+      # 6. Upload the APK so you can download it
+      - uses: actions/upload-artifact@v4
+        with:
+          name: study-gatherer-apk
+          path: build/app/outputs/flutter-apk/app-release.apk
+          
